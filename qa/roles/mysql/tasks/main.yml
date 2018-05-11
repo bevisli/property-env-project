@@ -1,0 +1,17 @@
+- name: install mysql
+  apt: name=mysql-server-5.7
+  register: mysql_installed
+
+- name: create mysql admin user
+  command: /usr/bin/mysql -u root -e "GRANT ALL PRIVILEGES ON *.* TO {{mysql_admin_user}}@'localhost' IDENTIFIED BY '{{mysql_admin_password}}';"
+  when: mysql_installed.changed
+
+- name: update /etc/mysql/conf.d/bind.cnf
+  copy: src=etc/mysql/conf.d/bind.cnf dest=/etc/mysql/conf.d/bind.cnf
+
+- name: update /etc/mysql/mysql.conf.d/mysqld.cnf
+  copy: src=etc/mysql/mysql.conf.d/mysqld.cnf dest=/etc/mysql/mysql.conf.d/mysqld.cnf
+
+- name: enable mysql service
+  service: name=mysql enabled=yes
+

@@ -1,0 +1,25 @@
+- hosts: localhost
+  pre_tasks:
+    - name: create packages folder
+      file: path=/opt/build/packages owner=root group=root state=directory
+
+    - name: copy nginx.conf
+      copy: src=/opt/build/depot/property-env-project/qa/build-packages/nginx.conf dest=/opt/build/packages/ owner=root group=root mode=0755 force=yes
+
+  roles: [nginx, jenkins, ntp]
+  vars:
+    nginx_default_conf: "{{lookup('file','/opt/build/packages/nginx.conf')}}"
+    jenkins_plugins: [antisamy-markup-formatter,credentials,git,git-client,icon-shim,junit,mailer,matrix-auth,matrix-project,scm-api,script-security,ssh-credentials,windows-slaves]
+
+  tasks:
+    - name: copy release scripts
+      copy: src=/opt/build/depot/property-env-project/qa/build-packages/release dest=/opt/build/ owner=root group=root mode=0755 force=yes
+
+    - name: copy jenkins jobs
+      copy: src=/opt/build/depot/property-env-project/qa/build-packages/jenkins dest=/var/lib/ owner=jenkins group=jenkins force=yes
+
+    - name: restart jenkins jobs
+      service: name=jenkins state=restarted
+
+    - name: update permission on gradlew
+      file: path=/opt/build/depot/property/gradlew state=touch mode="u=rwx,g=r,o=r"

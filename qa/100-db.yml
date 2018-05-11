@@ -1,0 +1,9 @@
+- hosts: localhost
+  roles: [mysql]
+  vars:
+      mysql_admin_user: "root"
+      mysql_admin_password: "root"
+
+  tasks:
+    - name: restart mysql
+      service: name=mysql state=restarted

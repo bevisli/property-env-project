@@ -1,0 +1,12 @@
+[Unit]
+Description=app
+After=network.target
+
+[Service]
+Environment="JAVA_OPTS={{app_java_opts}}"
+ExecStartPre=/bin/rm -rf /opt/app/*
+ExecStartPre=/bin/tar xf /opt/app-packages/{{app_name}}.tar -C /opt/app
+ExecStart=/opt/app/{{app_name}}/bin/{{app_name}}
+
+[Install]
+WantedBy=multi-user.target

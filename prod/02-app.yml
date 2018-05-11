@@ -1,0 +1,23 @@
+- hosts: localhost
+  pre_tasks:
+    - name: create app packages folder
+      file: path=/opt/app-packages owner=root group=root state=directory
+
+    - name: create nginx conf folder
+      file: path=/opt/app-packages/nginx owner=root group=root state=directory
+
+    - name: copy nginx.conf
+      copy: src=/opt/build/depot/asamxpress-env-project/prod/app-packages/nginx.conf dest=/opt/app-packages/nginx/ owner=root group=root mode=0755 force=yes
+
+  roles: [nginx, app]
+  vars:
+    nginx_default_conf: "{{lookup('file','/opt/app-packages/nginx/nginx.conf')}}"
+    app_name: asamxpress-service
+    app_java_opts: -XX:+UseG1GC -Xms800m -Xmx800m -Xss256k -Djava.awt.headless=true
+
+  tasks:
+    - name: restart nginx service
+      service: name=nginx state=restarted
+
+    - name: update libs
+      copy: src=/opt/build/depot/asamxpress-env-project/prod/app-packages/lib/ dest=/usr/lib/jvm/java-8-openjdk-amd64/jre/lib/security/ owner=root group=root mode=777

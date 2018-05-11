@@ -1,0 +1,14 @@
+- name: install nginx
+  apt: name=nginx
+
+- name: update /etc/nginx/*
+  copy: src=etc/nginx/ dest=/etc/nginx owner=root group=root mode=0644
+
+- name: update /etc/nginx/sites-available/default
+  template: src=etc/nginx/sites-available/default.j2 dest=/etc/nginx/sites-available/default owner=root group=root mode=0644
+
+- name: update /etc/nginx/sites-enabled/default
+  file: src=/etc/nginx/sites-available/default dest=/etc/nginx/sites-enabled/default state=link
+
+- name: enable nginx service
+  service: name=nginx enabled=yes

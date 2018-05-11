@@ -1,0 +1,60 @@
+- hosts: localhost
+  vars:
+    sys_ssh_private_key: |
+          -----BEGIN RSA PRIVATE KEY-----
+          MIIEpAIBAAKCAQEA3ANeiGm4v201/Je0v5JqJtKkF4pl2nYGyub1GH5YgA7Ej9fr
+          kDEO7HGvGj7KNcAZMqoG6vFKfQzCTACHwvOQruwN3ljspWKhowYjSj0cDvhMCxGl
+          7Fa8DEdeg+PiwNzUERHgxRTgpaJqJzXktTl6InEYNFi4MA95XbYHQ7YDa/qwnG5N
+          5JRQDdTa/WNJmg++PU6juIsayEf3hM9vKuqG8GIz/1YpvfaXRaVH40rxIZNG/ziA
+          0t0zKu+doBxXGuwovE3oRBnisYzgUczaGoK9HXovPEIe6fLgAF2g0JHf4saOkbr9
+          Ftb1+XfiILzJVil88O4pjYZRR+R65BN2YCniuwIDAQABAoIBACsRacbwUx795OyO
+          Ue6SXb89yqtlBy0tn4TGk0H5MZ/XxDiYPt+aCt7UHj/X/MNq2EPnrrT9COTTw5EX
+          JXxPK4piYRCefayeUx/TisL0lXKEvnYIPV+3VtZcfi75RCEW2ViCFGrf/F3QHlGQ
+          pjWni7YER4WvvFaEIPDsOh3SGndfXZqVsiNv1Lj0dOchThQOtXt4EbFIcLRcFDFi
+          PlAqZpE0bcodSSGEayHYHSsx7hZXdhRNoJLrebBlX505T4VYrIWH/M9wFKnFSiNN
+          YopCd9w71NIBCFIqbf9Q6fSvL/x7a17y8fgxhTYF2HySmOBvVRuCZHS6QFS0Mj/k
+          4nIbi8kCgYEA7oK/IdM+LbpW1Bos4MFDA2OU4Jkd7XhtmdSoJyNK0F83iB75w8Yp
+          4IGFSaGe4UTSD3MIXHY1dUJmyBkatBjEN+S8bpE1Te5nC18xV/Jb4aHeqriE2HIM
+          5IYH8zg6E0qN4c/Y5vIqyWSPUK9eU/kj8mo+cUXQm7hCI/yuHXyQe/cCgYEA7CVk
+          SY7pneP2Hh+IHsmUFmEq8UqGsw2MLA0iUZR4coyOpR7wCfXaY9Qp6RQNsfMc9fDi
+          woM/L8DDa9CfAVyMHdDpxL2C0hD+CzaAz+NJottqpbPkqNdtSuIPuywgEnFmtqXH
+          zsMfrzHkRIdbhCEX3mY1wcGZeNbsDasCkHF/dl0CgYEA0Pswm2OrNIfz8m5o6hmM
+          LRkA5nZi+aKubb4eBATxVXhIgPWbJMWqBbOW5Pg+7OTPJYhGSDWvC2o+Ao+0jR6y
+          NsMts7d5vCnqkdU7t/J8PUwGfRGmHLx5vXYO2zZl9Gc7wCLMyzZe9Q0uYaT3Ap7m
+          t04OHlPsv7SIB14r9VwigOsCgYB06iJX5OC3IkkVKulazNR7rAn1wr8j4R44JRyL
+          pWVo2Tw6djHDzKweZsmFMz+AjewVu/iY8yAShW57b6N5qhdZH7jNhkJBvNX6OTbX
+          NiGb9uQ7O/CGw3nB7GB7e+I5H1oKLdPaA3Mpaxsn7pgZt8S4gIQ29KIGWOov7i3r
+          07WWpQKBgQCJjeTlb2DiXFNnoCsxGbtQGbB4yNSTAV70l3WRHB/RHf4wi4YKBqB+
+          lYDECbhhLUlPbdI0wFG9u0J80qQckOOH5iPSrMArOgJiQrnwtE01wEp7l9ZusVk3
+          OxT8kslQT1/DzgbtKJBXRsKJkqOE2myR6C5TFjrS7ckumsEPFIUhRA==
+          -----END RSA PRIVATE KEY-----
+
+    sys_ssh_public_key: "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDcA16Iabi/bTX8l7S/kmom0qQXimXadgbK5vUYfliADsSP1+uQMQ7sca8aPso1wBkyqgbq8Up9DMJMAIfC85Cu7A3eWOylYqGjBiNKPRwO+EwLEaXsVrwMR16D4+LA3NQREeDFFOClomonNeS1OXoicRg0WLgwD3ldtgdDtgNr+rCcbk3klFAN1Nr9Y0maD749TqO4ixrIR/eEz28q6obwYjP/Vim99pdFpUfjSvEhk0b/OIDS3TMq752gHFca7Ci8TehEGeKxjOBRzNoagr0dei88Qh7p8uAAXaDQkd/ixo6Ruv0W1vX5d+IgvMlWKXzw7imNhlFH5HrkE3ZgKeK7 root@iZrj95qf7n47jh8efrwu53Z"
+
+  tasks:
+    - name: create ssh folder
+      file: path=/root/.ssh owner=root group=root state=directory
+
+    - name: copy ssh private key
+      copy: content="{{sys_ssh_private_key}}" dest=/root/.ssh/id_rsa owner=root group=root mode=0600
+
+    - name: copy ssh public key
+      copy: content="{{sys_ssh_public_key}}" dest=/root/.ssh/id_rsa.pub owner=root group=root
+
+    - name: install git
+      apt: name=git
+
+    - name: create build folder
+      file: path=/opt/build owner=root group=root state=directory
+
+    - name: create depot folder
+      file: path=/opt/build/depot owner=root group=root state=directory
+
+    - name: install tmux
+      apt: name=tmux
+
+    - name: clone project repo
+          git: repo=https://github.com/bevisli/property-project.git dest=/opt/build/depot/property accept_hostkey=yes force=yes
+
+    - name: clone env repo
+          git: repo=https://github.com/bevisli/property-env-project.git dest=/opt/build/depot/property-env-project

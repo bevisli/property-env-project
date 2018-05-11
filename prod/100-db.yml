@@ -1,0 +1,9 @@
+- hosts: localhost
+  roles: [mysql]
+  vars:
+      mysql_admin_user: "admin"
+      mysql_admin_password: "asamxpress!prod2018"
+
+  tasks:
+    - name: restart mysql
+      service: name=mysql state=restarted
